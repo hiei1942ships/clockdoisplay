@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15倍速デジタル時計 - 表示専用</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #clock {
+            font-size: 5em;
+        }
+    </style>
+</head>
+<body>
+    <div id="clock">00:00:00</div>
+
+    <script>
+        function updateClock() {
+            const currentTime = localStorage.getItem("currentTime") || "00:00:00";
+            document.getElementById("clock").innerText = currentTime;
+        }
+
+        setInterval(updateClock, 1000 / 15); // 15倍速で更新
+    </script>
+</body>
+</html>
