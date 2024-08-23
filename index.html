@@ -58,15 +58,14 @@
         }
 
         function startClock() {
-    if (intervalId) clearInterval(intervalId);
-    
-    // ユーザーがセットした時間を基に新しいDateオブジェクトを作成
-    const now = new Date();
-    startTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), setHours, setMinutes, setSeconds, 0);
-    
-    intervalId = setInterval(updateClock, 1000 / 15);
-}
-
+            if (intervalId) clearInterval(intervalId);
+            
+            // 正しい現在の日付と設定された時間を使用してstartTimeを初期化
+            const now = new Date();
+            startTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), setHours, setMinutes, setSeconds, 0);
+            
+            intervalId = setInterval(updateClock, 1000 / 15);
+        }
 
         function resetClock() {
             clearInterval(intervalId);
@@ -77,4 +76,3 @@
     </script>
 </body>
 </html>
-
