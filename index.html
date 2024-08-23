@@ -34,12 +34,12 @@
     <script>
         let startTime;
         let intervalId;
-        let setHours, setMinutes, setSeconds;
+        let setHours = 0, setMinutes = 0, setSeconds = 0;
+        let simulatedTime = 0; // シミュレートされた時間を管理
 
         function updateClock() {
-            const now = new Date();
-            const elapsed = (now - startTime) * 15; // 15倍速
-            const currentTime = new Date(startTime.getTime() + elapsed);
+            simulatedTime += 1000 * 15; // 15倍速で進める
+            const currentTime = new Date(startTime.getTime() + simulatedTime);
             document.getElementById("clock").innerText = currentTime.toTimeString().split(" ")[0];
             localStorage.setItem("currentTime", currentTime.toTimeString().split(" ")[0]);
         }
@@ -59,12 +59,11 @@
 
         function startClock() {
             if (intervalId) clearInterval(intervalId);
-            
-            // 正しい現在の日付と設定された時間を使用してstartTimeを初期化
+
             const now = new Date();
             startTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), setHours, setMinutes, setSeconds, 0);
-            
-            intervalId = setInterval(updateClock, 1000 / 15);
+            simulatedTime = 0; // シミュレートされた時間をリセット
+            intervalId = setInterval(updateClock, 1000);
         }
 
         function resetClock() {
@@ -72,6 +71,7 @@
             document.getElementById("clock").innerText = "00:00:00";
             document.getElementById("timeInput").value = '';
             localStorage.removeItem("currentTime");
+            simulatedTime = 0; // シミュレートされた時間をリセット
         }
     </script>
 </body>
