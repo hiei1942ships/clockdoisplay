@@ -18,13 +18,28 @@
 <body>
     <div id="clock">00:00:00</div>
 
+    <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
     <script>
-        function updateClock() {
-            const currentTime = localStorage.getItem("currentTime") || "00:00:00";
-            document.getElementById("clock").innerText = currentTime;
-        }
+        // Pusherの設定
+        const pusher = new Pusher('YOUR_APP_KEY', {
+            cluster: 'YOUR_CLUSTER'
+        });
 
-        setInterval(updateClock, 1000 / 15); // 15倍速で更新
+        const channel = pusher.subscribe('clock-channel');
+
+        channel.bind('start', (data) => {
+            const startTime = new Date(data.startTime);
+            let simulatedTime = data.simulatedTime;
+            setInterval(() => {
+                simulatedTime += 1000 * 15;
+                const currentTime = new Date(startTime.getTime() + simulatedTime);
+                document.getElementById("clock").innerText = currentTime.toTimeString().split(" ")[0];
+            }, 1000);
+        });
+
+        channel.bind('reset', () => {
+            document.getElementById("clock").innerText = "00:00:00";
+        });
     </script>
 </body>
 </html>
