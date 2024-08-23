@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>15倍速デジタル時計 - 表示</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-size: 5vw; /* 画面幅に合わせたフォントサイズ */
+      background-color: black;
+      color: white;
+      font-family: "Courier New", Courier, monospace;
+    }
+  </style>
+</head>
+<body>
+  <div id="clock">00:00:00</div>
+
+  <script>
+    // メッセージを受信して時計の表示を更新する
+    window.addEventListener("message", function(event) {
+      const clockElement = document.getElementById("clock");
+      clockElement.textContent = event.data;
+    });
+  </script>
+</body>
+</html>
