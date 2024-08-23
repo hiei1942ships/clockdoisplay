@@ -1,74 +1,62 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>15倍速デジタル時計 - コントロール</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15倍速デジタル時計</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #clock {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            margin: 5px;
+        }
+    </style>
 </head>
 <body>
-  <div>
-    <label for="start-time">開始時間 (HH:MM:SS): </label>
-    <input type="text" id="start-time" value="00:00:00">
-    <button id="set-button">セット</button>
-    <button id="start-button">スタート</button>
-    <button id="reset-button">リセット</button>
-  </div>
+    <div id="clock">00:00:00</div>
+    <input type="time" id="timeInput" step="1">
+    <br>
+    <button onclick="startClock()">スタート</button>
+    <button onclick="resetClock()">リセット</button>
 
-  <script>
-    let intervalId;
-    let currentTime;
+    <script>
+        let startTime;
+        let intervalId;
 
-    // 時計の表示を更新する関数
-    function updateClock() {
-      // 15倍速で時間を進める
-      currentTime.setSeconds(currentTime.getSeconds() + 15);
+        function updateClock() {
+            const now = new Date();
+            const elapsed = (now - startTime) * 15; // 15倍速
+            const currentTime = new Date(startTime.getTime() + elapsed);
+            document.getElementById("clock").innerText = currentTime.toTimeString().split(" ")[0];
+        }
 
-      // 時、分、秒を取得
-      const hours = currentTime.getHours();
-      const minutes = currentTime.getMinutes();
-      const seconds = currentTime.getSeconds();
+        function startClock() {
+            const timeInput = document.getElementById("timeInput").value;
+            if (timeInput) {
+                const [hours, minutes, seconds] = timeInput.split(':').map(Number);
+                const now = new Date();
+                startTime = new Date(now.setHours(hours, minutes, seconds, 0));
+            } else {
+                startTime = new Date();
+            }
+            if (intervalId) clearInterval(intervalId);
+            intervalId = setInterval(updateClock, 1000 / 15);
+        }
 
-      // 時、分、秒が1桁の場合は0を追加
-      const displayHours = hours.toString().padStart(2, "0");
-      const displayMinutes = minutes.toString().padStart(2, "0");
-      const displaySeconds = seconds.toString().padStart(2, "0");
-
-      // 時計表示ページに時刻を送信
-      window.frames[0].postMessage(`${displayHours}:${displayMinutes}:${displaySeconds}`, "*");
-    }
-
-    // セットボタンのクリックイベント
-    document.getElementById("set-button").addEventListener("click", function() {
-      // ユーザーが指定した開始時間を取得
-      const inputTime = document.getElementById("start-time").value;
-      const [inputHours, inputMinutes, inputSeconds] = inputTime.split(':').map(Number);
-
-      // 指定した時間からDateオブジェクトを作成
-      currentTime = new Date();
-      currentTime.setHours(inputHours);
-      currentTime.setMinutes(inputMinutes);
-      currentTime.setSeconds(inputSeconds);
-
-      // セットされた時間を即座に表示
-      updateClock();
-    });
-
-    // スタートボタンのクリックイベント
-    document.getElementById("start-button").addEventListener("click", function() {
-      // 既存のタイマーがある場合はクリア
-      clearInterval(intervalId);
-
-      // 1秒毎にupdateClockを実行 (現実時間では1秒だが、時計では15秒が進む)
-      intervalId = setInterval(updateClock, 1000);
-    });
-
-    // リセットボタンのクリックイベント
-    document.getElementById("reset-button").addEventListener("click", function() {
-      clearInterval(intervalId);
-      window.frames[0].postMessage("00:00:00", "*");
-    });
-  </script>
-
-  <!-- 時計表示ページをインラインフレームで読み込み -->
-  <iframe src="clock.html" style="width: 100%; height: 50px; border: none;"></iframe>
+        function resetClock() {
+            clearInterval(intervalId);
+            document.getElementById("clock").innerText = "00:00:00";
+            document.getElementById("timeInput").value = '';
+        }
+    </script>
 </body>
 </html>
