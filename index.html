@@ -25,30 +25,42 @@
     <div id="clock">00:00:00</div>
     <input type="time" id="timeInput" step="1">
     <br>
+    <button onclick="setTime()">セット</button>
     <button onclick="startClock()">スタート</button>
     <button onclick="resetClock()">リセット</button>
+    <br>
+    <a href="display.html" target="_blank">別ページで時間を表示</a>
 
     <script>
         let startTime;
         let intervalId;
+        let setHours, setMinutes, setSeconds;
 
         function updateClock() {
             const now = new Date();
             const elapsed = (now - startTime) * 15; // 15倍速
             const currentTime = new Date(startTime.getTime() + elapsed);
             document.getElementById("clock").innerText = currentTime.toTimeString().split(" ")[0];
+            localStorage.setItem("currentTime", currentTime.toTimeString().split(" ")[0]);
+        }
+
+        function setTime() {
+            const timeInput = document.getElementById("timeInput").value;
+            if (timeInput) {
+                [setHours, setMinutes, setSeconds] = timeInput.split(':').map(Number);
+            } else {
+                const now = new Date();
+                setHours = now.getHours();
+                setMinutes = now.getMinutes();
+                setSeconds = now.getSeconds();
+            }
+            document.getElementById("clock").innerText = `${String(setHours).padStart(2, '0')}:${String(setMinutes).padStart(2, '0')}:${String(setSeconds).padStart(2, '0')}`;
         }
 
         function startClock() {
-            const timeInput = document.getElementById("timeInput").value;
-            if (timeInput) {
-                const [hours, minutes, seconds] = timeInput.split(':').map(Number);
-                const now = new Date();
-                startTime = new Date(now.setHours(hours, minutes, seconds, 0));
-            } else {
-                startTime = new Date();
-            }
             if (intervalId) clearInterval(intervalId);
+            const now = new Date();
+            startTime = new Date(now.setHours(setHours, setMinutes, setSeconds, 0));
             intervalId = setInterval(updateClock, 1000 / 15);
         }
 
@@ -56,7 +68,9 @@
             clearInterval(intervalId);
             document.getElementById("clock").innerText = "00:00:00";
             document.getElementById("timeInput").value = '';
+            localStorage.removeItem("currentTime");
         }
     </script>
 </body>
 </html>
+
