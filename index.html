@@ -31,6 +31,54 @@
     <br>
     <a href="display.html" target="_blank">別ページで時間を表示</a>
 
-    <script src="script.js"></script>
+    <script>
+        let startTime;
+        let intervalId;
+        let setHours = 0, setMinutes = 0, setSeconds = 0;
+        let simulatedTime = 0; // シミュレートされた時間を管理
+
+        function updateClock() {
+            simulatedTime += 1000 * 15; // 15倍速で進める
+            const currentTime = new Date(startTime.getTime() + simulatedTime);
+            document.getElementById("clock").innerText = currentTime.toTimeString().split(" ")[0];
+            localStorage.setItem("startTime", startTime.getTime());
+            localStorage.setItem("simulatedTime", simulatedTime);
+        }
+
+        function setTime() {
+            const timeInput = document.getElementById("timeInput").value;
+            if (timeInput) {
+                [setHours, setMinutes, setSeconds] = timeInput.split(':').map(Number);
+            } else {
+                const now = new Date();
+                setHours = now.getHours();
+                setMinutes = now.getMinutes();
+                setSeconds = now.getSeconds();
+            }
+            document.getElementById("clock").innerText = `${String(setHours).padStart(2, '0')}:${String(setMinutes).padStart(2, '0')}:${String(setSeconds).padStart(2, '0')}`;
+        }
+
+        function startClock() {
+            if (intervalId) clearInterval(intervalId);
+
+            const now = new Date();
+            startTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), setHours, setMinutes, setSeconds, 0);
+            simulatedTime = 0; // シミュレートされた時間をリセット
+
+            localStorage.setItem("startTime", startTime.getTime());
+            localStorage.setItem("simulatedTime", simulatedTime);
+
+            intervalId = setInterval(updateClock, 1000);
+        }
+
+        function resetClock() {
+            clearInterval(intervalId);
+            document.getElementById("clock").innerText = "00:00:00";
+            document.getElementById("timeInput").value = '';
+            localStorage.removeItem("startTime");
+            localStorage.removeItem("simulatedTime");
+            simulatedTime = 0; // シミュレートされた時間をリセット
+        }
+    </script>
 </body>
 </html>
