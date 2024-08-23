@@ -18,6 +18,20 @@
 <body>
     <div id="clock">00:00:00</div>
 
-    <script src="script.js"></script>
+    <script>
+        function updateClock() {
+            const startTime = parseInt(localStorage.getItem("startTime")) || 0;
+            const simulatedTime = parseInt(localStorage.getItem("simulatedTime")) || 0;
+
+            if (startTime && simulatedTime >= 0) {
+                const currentTime = new Date(startTime + simulatedTime);
+                document.getElementById("clock").innerText = currentTime.toTimeString().split(" ")[0];
+            } else {
+                document.getElementById("clock").innerText = "00:00:00";
+            }
+        }
+
+        setInterval(updateClock, 1000 / 15); // 15倍速で更新
+    </script>
 </body>
 </html>
